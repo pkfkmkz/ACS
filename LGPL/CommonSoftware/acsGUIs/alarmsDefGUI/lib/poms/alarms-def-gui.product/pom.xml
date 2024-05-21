@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <name>Alarms Definition GUI Product</name>
+    <groupId>alma.acs</groupId>
+    <artifactId>alarms-def-gui.product</artifactId>
+    <packaging>eclipse-repository</packaging>
+
+    <parent>
+        <groupId>alma.acs</groupId>
+        <artifactId>alarms-def-gui.parent</artifactId>
+        <version>${revision}${sha1}${changelist}</version>
+        <relativePath>../../..</relativePath>
+    </parent>
+
+    <dependencies>
+        <dependency>
+            <groupId>alma.acs</groupId>
+            <artifactId>alarms-def-gui.app</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>alma.acs</groupId>
+            <artifactId>alarms-def-gui.deps</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.eclipse.tycho</groupId>
+                <artifactId>tycho-p2-director-plugin</artifactId>
+                <version>${tycho.version}</version>
+                <configuration>
+                    <includeAllDependencies>true</includeAllDependencies>
+                    <installFeatures>false</installFeatures>
+<!--
+                    <directorRuntime>standalone</directorRuntime>
+                    <source>repository</source>
+-->
+                    <formats>
+                        <win32>zip</win32>
+                        <linux>tar.gz</linux>
+                        <macosx>tar.gz</macosx>
+                    </formats>
+                    <products>
+                        <product>
+                            <id>alarms-def-gui.product</id>
+                            <archiveFileName>alarms-def-gui-${unqualifiedVersion}-${buildQualifier}</archiveFileName>
+                            <rootFolders>
+                                <macosx>alarms-def-gui</macosx>
+                                <linux>alarms-def-gui</linux>
+                                <win32>alarms-def-gui</win32>
+                            </rootFolders>
+                        </product>
+                    </products>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>materialize-products</id>
+                        <goals>
+                            <goal>materialize-products</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>archive-products</id>
+                        <goals>
+                            <goal>archive-products</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

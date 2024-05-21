@@ -1,0 +1,20 @@
+instantiating session factory with properties
+^1 - ,.*}$
+\[acsStartJava\]
+^. - [jJ]ava
+Delaying starting
+OpenJDK 
+openjdk 
+Cycle complete
+MBean
+Initializing c3p0 pool...
+com.mchange.v2.resourcepool.BasicResourcePool
+com.mchange.v2.c3p0.impl.NewProxyConnection
+Config available to MLog library
+Initializing$
+Initialize successful.
+Moving from UNINITIALIZED to AVAILABLE
+Starting .. Services...
+Starting service
+Starting org.ehcache
+All Services successfully started,

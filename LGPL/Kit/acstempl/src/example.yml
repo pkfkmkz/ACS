@@ -1,0 +1,9 @@
+working_dir: /home/developer/workspace
+prefix: acsws
+module: workshop
+component_name: MyComponent
+functions:
+  # list of each function's IDL definition:
+  # returnType functionName(parameter1, parameter2, ...)
+  - 'string printHello()'
+  # - 'void saveData(string name, int age)'

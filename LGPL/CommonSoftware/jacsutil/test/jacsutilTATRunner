@@ -1,0 +1,16 @@
+#! /usr/bin/bash
+JAR=jACSUtil.jar
+
+if [ -e ../lib/$JAR ]; then
+    JACSUTIL=../lib/$JAR
+else
+    JACSUTIL=$(searchFile lib/$JAR)/lib/$JAR
+fi
+
+if [ -z "$INTROOT" ]; then
+    PROPS_CLASSLOADER="-Djava.system.class.loader=alma.acs.classloading.AcsSystemClassLoader --add-opens java.base/jdk.internal.loader=ALL-UNNAMED -Dacs.system.classpath.jardirs=../lib${PATH_SEP}$ACSROOT/lib${PATH_SEP}${ACSDEPS}/lib"
+else
+    PROPS_CLASSLOADER="-Djava.system.class.loader=alma.acs.classloading.AcsSystemClassLoader --add-opens java.base/jdk.internal.loader=ALL-UNNAMED -Dacs.system.classpath.jardirs=../lib${PATH_SEP}$INTROOT/lib${PATH_SEP}$ACSROOT/lib${PATH_SEP}${ACSDEPS}/lib"
+fi
+
+java --add-opens java.management/sun.management=ALL-UNNAMED -cp $JACSUTIL $PROPS_CLASSLOADER $@

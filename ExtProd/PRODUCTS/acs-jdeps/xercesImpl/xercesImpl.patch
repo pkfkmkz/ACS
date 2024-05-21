@@ -1,0 +1,70 @@
+diff -Naur java.orig/org/apache/html/dom/HTMLFrameElementImpl.java java/org/apache/html/dom/HTMLFrameElementImpl.java
+--- java.orig/org/apache/html/dom/HTMLFrameElementImpl.java	2020-01-01 06:58:52.000000000 +0000
++++ java/org/apache/html/dom/HTMLFrameElementImpl.java	2021-08-24 19:04:22.329422967 +0000
+@@ -128,6 +128,10 @@
+         setAttribute( "src", src );
+     }
+     
++    public String getContent()
++    {
++        return null;
++    }
+     
+     // method added, so that xerces can be built with JDK 9 & above
+     public Document getContentDocument() {
+diff -Naur java.orig/org/apache/html/dom/HTMLIFrameElementImpl.java java/org/apache/html/dom/HTMLIFrameElementImpl.java
+--- java.orig/org/apache/html/dom/HTMLIFrameElementImpl.java	2020-01-01 06:58:52.000000000 +0000
++++ java/org/apache/html/dom/HTMLIFrameElementImpl.java	2021-08-24 19:04:36.453432880 +0000
+@@ -151,6 +151,10 @@
+         setAttribute( "width", width );
+     }
+     
++    public String getContent()
++    {
++        return null;
++    }
+     
+     // method added, so that xerces can be built with JDK 9 & above
+     public Document getContentDocument() {
+diff -Naur java.orig/org/apache/html/dom/HTMLObjectElementImpl.java java/org/apache/html/dom/HTMLObjectElementImpl.java
+--- java.orig/org/apache/html/dom/HTMLObjectElementImpl.java	2020-01-01 06:58:49.000000000 +0000
++++ java/org/apache/html/dom/HTMLObjectElementImpl.java	2021-08-24 19:04:59.467449028 +0000
+@@ -240,6 +240,10 @@
+         setAttribute( "width", width );
+     }
+ 
++    public String getContent()
++    {
++        return null;
++    }
+     
+     // method added, so that xerces can be built with JDK 9 & above
+     public Document getContentDocument() {
+diff -Naur java.orig/org/apache/xerces/xpointer/XPointerHandler.java java/org/apache/xerces/xpointer/XPointerHandler.java
+--- java.orig/org/apache/xerces/xpointer/XPointerHandler.java	2020-01-01 06:58:46.000000000 +0000
++++ java/org/apache/xerces/xpointer/XPointerHandler.java	2021-08-24 19:05:35.466474289 +0000
+@@ -1055,7 +1055,7 @@
+ 
+             return;
+         }
+-        super.startElement(element, attributes, augs);
++        //super.startElement(element, attributes, augs);
+     }
+ 
+     /**
+@@ -1144,7 +1144,7 @@
+             // no need to restore restoreBaseURI() for xml:base and xml:lang processing
+             return;
+         }
+-        super.endElement(element, augs);
++        //super.endElement(element, augs);
+     }
+ 
+     /**
+@@ -1249,4 +1249,4 @@
+         super.setProperty(propertyId, value);
+     }
+ 
+-}
+\ No newline at end of file
++}

@@ -1,0 +1,21 @@
+#ifndef _ICT_12398_IDL
+#define _ICT_12398_IDL
+
+#include <acscommon.idl>
+#include <acscomponent.idl>
+
+#pragma prefix "alma"
+
+module ACS_Regression {
+    interface TestCallback: ACS::OffShoot {
+        oneway void notify();
+    };
+    interface TestComponent: ACS::ACSComponent {
+        oneway void execute(in TestCallback cb);
+    };
+    interface CallerComponent: ACS::ACSComponent {
+        void interact();
+    };
+};
+
+#endif

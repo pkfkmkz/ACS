@@ -1,0 +1,15 @@
+#*******************************************************************************
+# E.S.O. - VLT project
+#
+# "@(#) $Id: TestList.lite,v 1.4 2012/10/19 12:53:28 hsommer Exp $"
+#
+# TestList
+#
+# who       when      what
+# --------  --------  ----------------------------------------------
+# agrimstrup 2008-12-11 created
+
+SOURCE acsContainerServicesTATEnvironment
+1 SmartPtrTest "acsComponentSmartPtrTest"
+2 EventSubscriberSmEngineTest "acsStartJava alma.acs.testsupport.tat.TATJUnitRunner alma.acs.nc.sm.EventSubscriberSmEngineTest"
+3 InMemoryNcTest "acsStartJava alma.acs.testsupport.tat.TATJUnitRunner alma.acs.nc.testsupport.InMemoryNcTest"

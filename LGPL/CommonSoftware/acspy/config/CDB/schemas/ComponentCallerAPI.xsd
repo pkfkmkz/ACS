@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema targetNamespace="urn:schemas-cosylab-com:ComponentCallerAPI:1.0"
+           xmlns="urn:schemas-cosylab-com:ComponentCallerAPI:1.0"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:baci="urn:schemas-cosylab-com:BACI:1.0" elementFormDefault="qualified"
+           attributeFormDefault="unqualified" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+    <xs:element name="ComponentCallerAPI">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="AccessPolicies" maxOccurs="1" minOccurs="0">
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element name="Component" maxOccurs="unbounded" minOccurs="0">
+                        <xs:complexType>
+                          <xs:sequence>
+                            <xs:element name="Method" maxOccurs="unbounded" minOccurs="0">
+                                <xs:complexType>
+                                  <xs:attribute name="name" type="xs:string" use="required"/>
+                                </xs:complexType>
+                            </xs:element>
+                          </xs:sequence>
+                          <xs:attribute name="name" type="xs:string"/>
+                          <xs:attribute name="type" type="xs:string"/>
+                        </xs:complexType>
+                      </xs:element>
+                    </xs:sequence>
+                  </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

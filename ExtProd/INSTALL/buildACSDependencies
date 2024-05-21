@@ -1,0 +1,119 @@
+#! /bin/bash
+#************************************************************************
+#   NAME
+#
+#   SYNOPSIS
+#
+#   DESCRIPTION
+#
+#   FILES
+#
+#   ENVIRONMENT
+#
+#   RETURN VALUES
+#
+#   CAUTIONS
+#
+#   EXAMPLES
+#
+#   SEE ALSO
+#
+#   BUGS
+#
+#------------------------------------------------------------------------
+#
+
+#
+# Install External Dependencies
+#
+. standardUtilities
+os_discovery
+
+LOG=buildACSDependencies.log
+CWD=$(pwd)
+
+exec > $LOG 2>&1
+
+date
+
+if [ -d $ACSDEPS ]; then
+    echo ==== ACS Dependencies build Directory exists. Removing it
+    if [ ! -w $ACSDEPS ]; then
+        abort "Folder set by ACSDEPS (${ACSDEPS}) can not be erased!. Check user permission."
+    else
+        rm -rf $ACSDEPS
+    fi
+fi
+
+mkdir $ACSDEPS
+mkdir $ACSDEPS/bin
+mkdir $ACSDEPS/lib
+mkdir $ACSDEPS/config
+mkdir $ACSDEPS/include
+
+#Symbolic links for transition while subsystems take advantage of new location and environment variable $ACSDEPS
+if [ ! -L $ALMASW_INSTDIR/ExternalDependencies ]; then
+    if [ -d $ALMASW_INSTDIR/ExternalDependencies ]; then
+        echo "WARNING: $ALMASW_INSTDIR/ExternalDependencies directory exists. Replacing it for symbolic link"
+        rm -rf $ALMASW_INSTDIR/ExternalDependencies
+    fi
+    ln -rs $ACSDEPS $ALMASW_INSTDIR/ExternalDependencies
+elif [ $(readlink $ALMASW_INSTDIR/ExternalDependencies) != acsdeps ]; then
+    echo "WARNING: $ALMASW_INSTDIR/ExternalDependencies symbolic link doesn't point to acsdeps. Creating it again"
+    rm -f $ALMASW_INSTDIR/ExternalDependencies
+    ln -rs $ACSDEPS $ALMASW_INSTDIR/ExternalDependencies
+fi
+
+if [ ! -L $ALMASW_INSTDIR/JavaDependencies ]; then
+    if [ -d $ALMASW_INSTDIR/JavaDependencies ]; then
+        echo "WARNING: $ALMASW_INSTDIR/JavaDependencies directory exists. Replacing it for symbolic link"
+        rm -rf $ALMASW_INSTDIR/JavaDependencies
+    fi
+    ln -rs $ACSDEPS $ALMASW_INSTDIR/JavaDependencies
+elif [ $(readlink $ALMASW_INSTDIR/JavaDependencies) != acsdeps ]; then
+    echo "WARNING: $ALMASW_INSTDIR/JavaDependencies symbolic link doesn't point to acsdeps. Creating it again"
+    rm -f $ALMASW_INSTDIR/JavaDependencies
+    ln -rs $ACSDEPS $ALMASW_INSTDIR/JavaDependencies
+fi
+
+echo installing External Dependencies
+
+echo $SEPARATOR
+
+if [ ${OS} = "LINUX" ]; then
+    echo "Installing on $DISTRO $OS version $REL"
+else
+    echo "Installing on $OS version $REL"
+fi
+
+cd ../PRODUCTS/acs-ext
+
+if [ -z "$NUM_CPU" ]; then
+    NUM_CPU=$(grep -c processor /proc/cpuinfo)
+fi
+make -j $NUM_CPU INSTALL_DIR=$ACSDEPS build || { echo "FAILED: Installing External Dependencies" && exit 1; }
+
+cd $CWD
+
+echo $SEPARATOR
+
+cp ../PRODUCTS/acs-pom.xml $ACSDEPS
+if echo $ALMASW_RELEASE |grep "ACS-[0-9]\{4\}[A-Z]\{3\}" > /dev/null; then
+    ACS_YEAR=$(echo $ALMASW_RELEASE |sed "s/ACS-\(....\)\(...\)/\1/")
+    ACS_MONTH=$(echo $ALMASW_RELEASE |sed "s/ACS-\(....\)\(...\)/\2/")
+    ACS_MONTH=$(date -d "${ACS_MONTH} 01" "+%m")
+    ACS_VERSION=$ACS_YEAR.$ACS_MONTH
+else
+    ACS_VERSION=$ALMASW_RELEASE
+fi
+sed -i "s|ACS_VERSION|$ACS_VERSION|" $ACSDEPS/acs-pom.xml
+cp -r ../PRODUCTS/acs-jdeps/* $ACSDEPS
+sed -i "s|ACS_VERSION|$ACS_VERSION|" $ACSDEPS/pom.xml
+
+mvn -B -f $ACSDEPS/acs-pom.xml -pl '.' package clean || { echo "FAILED: Installing Java dependencies" && exit 1; }
+mvn -B -f $ACSDEPS install clean || { echo "FAILED: Installing patched Java dependencies" && exit 1; }
+
+cd $CWD
+
+echo "External Dependencies installation done."
+date

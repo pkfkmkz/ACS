@@ -1,0 +1,11 @@
+diff -Naur doxygen-1.8.14.orig/src/util.cpp doxygen-1.8.14/src/util.cpp
+--- doxygen-1.8.14.orig/src/util.cpp	2017-12-24 10:20:24.000000000 +0000
++++ doxygen-1.8.14/src/util.cpp	2021-12-28 12:37:03.632850385 +0000
+@@ -7139,6 +7139,7 @@
+   updateLanguageMapping(".hpp",      "c");
+   updateLanguageMapping(".h++",      "c");
+   updateLanguageMapping(".idl",      "idl");
++  updateLanguageMapping(".midl",     "idl");
+   updateLanguageMapping(".ddl",      "idl");
+   updateLanguageMapping(".odl",      "idl");
+   updateLanguageMapping(".java",     "java");

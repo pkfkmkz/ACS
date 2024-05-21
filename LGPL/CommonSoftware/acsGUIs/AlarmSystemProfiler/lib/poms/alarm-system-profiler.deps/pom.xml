@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+
+    <name>Alarm System Profiler Dependencies Plugin</name>
+    <groupId>alma.acs</groupId>
+    <artifactId>alarm-system-profiler.deps</artifactId>
+    <packaging>bundle</packaging>
+
+    <parent>
+        <groupId>alma.acs</groupId>
+        <artifactId>alarm-system-profiler.parent</artifactId>
+        <version>${revision}${sha1}${changelist}</version>
+        <relativePath>../../..</relativePath>
+    </parent>
+
+    <dependencies>
+        <dependency>
+            <groupId>alma.acs</groupId>
+            <artifactId>laserclient</artifactId>
+            <version>${acs.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>alma.acs</groupId>
+            <artifactId>acsAlarmClients</artifactId>
+            <version>${acs.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>alma.acs</groupId>
+            <artifactId>acserrj</artifactId>
+            <version>${acs.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>alma.acs</groupId>
+            <artifactId>maciErrType</artifactId>
+            <version>${acs.version}</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>5.1.8</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <manifestLocation>META-INF</manifestLocation>
+                    <instructions>
+                        <Bundle-Version>${revision}${sha1}${qualifier}</Bundle-Version>
+                        <Export-Package>*</Export-Package>
+                        <Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>
+                        <Embed-StripGroup>true</Embed-StripGroup>
+                        <Embed-Transitive>true</Embed-Transitive>
+                        <Import-Package></Import-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

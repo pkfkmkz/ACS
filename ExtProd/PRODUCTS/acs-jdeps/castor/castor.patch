@@ -1,0 +1,270 @@
+diff -Naur java.orig/org/castor/xml/castor.xml.properties java/org/castor/xml/castor.xml.properties
+--- java.orig/org/castor/xml/castor.xml.properties	2023-10-24 18:43:39.587776384 +0000
++++ java/org/castor/xml/castor.xml.properties	2023-10-24 18:45:44.064550993 +0000
+@@ -130,7 +130,7 @@
+ # org.exolab.castor.marshalling.validation
+ # </pre>
+ #
+-org.exolab.castor.marshalling.validation=true
++org.exolab.castor.marshalling.validation=false
+ 
+ # Indicates whether XML documents (as generated during marshalling)
+ # should use indentation or not.
+@@ -143,7 +143,7 @@
+ # org.exolab.castor.indent
+ # </pre>
+ #
+-org.exolab.castor.indent=false
++org.exolab.castor.indent=true
+ 
+ # Comma-separated list of SAX 2 features that should be 
+ # enabled for the default parser.
+@@ -205,7 +205,7 @@
+ # org.exolab.castor.regexp=
+ # </pre>
+ #
+-org.exolab.castor.regexp=
++org.exolab.castor.regexp=org.exolab.castor.util.SunRegExpEvaluator
+ 
+ # Specifyies whether the ClassDescriptorResolver should (automatically) search
+ # for and consult with package mapping files (.castor.xml) to retrieve class
+@@ -281,7 +281,7 @@
+ # org.exolab.castor.xml.strictelements
+ # </pre>
+ #
+-org.exolab.castor.xml.strictelements=false
++org.exolab.castor.xml.strictelements=true
+ 
+ # Property specifying whether element strictness for introspected 
+ # classes/elements should be lenient (aka allowed);
+@@ -381,4 +381,4 @@
+ # <pre>
+ # org.exolab.castor.xml.member.naming.capitalisation.strict=false
+ # </pre>
+-org.exolab.castor.xml.member.naming.capitalisation.strict=false
+\ No newline at end of file
++org.exolab.castor.xml.member.naming.capitalisation.strict=false
+diff -Naur java.orig/org/exolab/castor/builder/castorbuilder.properties java/org/exolab/castor/builder/castorbuilder.properties
+--- java.orig/org/exolab/castor/builder/castorbuilder.properties	2023-10-24 18:43:39.557776438 +0000
++++ java/org/exolab/castor/builder/castorbuilder.properties	2023-10-24 18:43:45.193766233 +0000
+@@ -29,7 +29,7 @@
+ # <pre>
+ # org.exolab.castor.builder.javaclassmapping
+ # </pre>
+-#org.exolab.castor.builder.javaclassmapping=element
++org.exolab.castor.builder.javaclassmapping=type
+ 
+ # Specifies a super class for *all* generated classes.
+ # By default the generated classes do not extend another class.
+@@ -185,7 +185,7 @@
+ # org.exolab.castor.builder.forceJava4Enums
+ # </pre>
+ #
+-org.exolab.castor.builder.forceJava4Enums=false
++org.exolab.castor.builder.forceJava4Enums=true
+ 
+ # Specifies the maximum number of (enumeration) constant definitions to be
+ # allowed in a single generated source file.  The JVM has limits on the
+diff -Naur java.orig/org/exolab/castor/builder/factory/SourceFactory.java java/org/exolab/castor/builder/factory/SourceFactory.java
+--- java.orig/org/exolab/castor/builder/factory/SourceFactory.java	2023-10-24 18:43:39.554776443 +0000
++++ java/org/exolab/castor/builder/factory/SourceFactory.java	2023-10-24 18:43:45.193766233 +0000
+@@ -2001,7 +2001,16 @@
+           // --no classInfo yet so no source code available
+           // --for the base type: we need to generate it
+           if (cInfo == null) {
++            //<AlmaFix>
++            //recursion for the base type in method 'createSourceCode', lines 313/316, messes up the SGState: sgState.setCurrentFactoryState(state);
++            //we therefore have to save and re-set it.    
++            //this problem was reported by email to Castor committer Arnaud Blandin by hsommer in Feb. 2005                         
++            FactoryState oldFactoryState = state.getSGStateInfo().getCurrentFactoryState();
++            //                     System.out.println("BEFORE: SGState#currentFactoryState=" + oldFactoryState.jClass.getName());                        
+             JClass[] classes = createSourceCode(component, state.getSGStateInfo());
++            //                      System.out.println("AFTER: SGState#currentFactoryState=" + state.getSGStateInfo().getCurrentFactoryState().jClass.getName());
++            state.getSGStateInfo().setCurrentFactoryState(oldFactoryState);
++            //</AlmaFix>
+             cInfo = state.resolve(base);
+             baseClassName = classes[0].getName();
+           } else {
+@@ -2013,6 +2022,24 @@
+           // -- Create qualified class name for a base type class
+           // -- from another package
+           baseClassName = component.getQualifiedName();
++          //<AlmaFix>
++          // If classInfo.setBaseClass is not called here (for base classes from other schemas), 
++          // then we get a duplication-of-attributes-bug during marshalling:
++          // The code which is supposed to prevent this bug is in DescriptorSourceFactory#createSource(ClassInfo classInfo),
++          // where either createDescriptor() or createRestrictedDescriptor() is called, depending on the base class.
++          // Thus as a minimum hack, we must set a rudimentary base class's ClassInfo object which will be able to answer
++          // a call to method getAttributeField(..)
++          // Of course it would be much less of a hack if the base class would be registered in the state object somewhere else,
++          // so that it could be retrieved using "state.resolve(base)" as in the above case of base complex types from the same schema.
++          SGStateInfo sgStateTmp = state.getSGStateInfo();
++          FactoryState otherSchemaBaseState = new FactoryState(baseClassName, sgStateTmp, component.getJavaPackage(), component);
++          initialize(otherSchemaBaseState.getJClass());
++          // add base-attribute info to otherSchemaBaseState#classInfo
++          processAttributes(component.getBinding(), (ComplexType) base, otherSchemaBaseState);
++          
++          ClassInfo cInfo = state.resolve(base);
++          classInfo.setBaseClass(otherSchemaBaseState.getClassInfo());
++          //</AlmaFix>
+         }
+         // -- Set super class
+         // -- and reset the view on the current ComplexType
+diff -Naur java.orig/org/exolab/castor/castor.properties java/org/exolab/castor/castor.properties
+--- java.orig/org/exolab/castor/castor.properties	2023-10-24 18:43:39.558776436 +0000
++++ java/org/exolab/castor/castor.properties	2023-10-24 18:46:15.483494103 +0000
+@@ -76,15 +76,15 @@
+ # org.exolab.castor.regexp=org.exolab.castor.util.JakartaRegExpEvaluator
+ #
+ # An implementation which uses the Jakarta ORO library:
+-org.exolab.castor.regexp=org.exolab.castor.util.JakartaOroEvaluator
++# org.exolab.castor.regexp=org.exolab.castor.util.JakartaOroEvaluator
+ #
+ # An implementation which uses Sun's pattern matching library
+-# org.exolab.castor.regexp=org.exolab.castor.util.SunRegExpEvaluator
++org.exolab.castor.regexp=org.exolab.castor.util.SunRegExpEvaluator
+ 
+ # True if all documents should be indented on output by default.
+ # Defaults to false.
+ #
+-#org.exolab.castor.indent=true
++org.exolab.castor.indent=true
+ 
+ # True if xml documents should be validated by the SAX Parser
+ # Defaults to false.
+@@ -99,7 +99,7 @@
+ # True if all documents should be validated by the marshaling framework
+ # Defaults to true.
+ #
+-org.exolab.castor.marshalling.validation=true
++org.exolab.castor.marshalling.validation=false
+ 
+ # Comma separated list of SAX 2 features that should be enabled for the
+ # default parser.
+@@ -280,4 +280,4 @@
+ # - 1.1
+ # 
+ org.exolab.castor.xml.version=1.0
+-        
+\ No newline at end of file
++        
+diff -Naur java.orig/org/exolab/castor/xml/MarshalFramework.java java/org/exolab/castor/xml/MarshalFramework.java
+--- java.orig/org/exolab/castor/xml/MarshalFramework.java	2023-10-24 18:43:39.571776413 +0000
++++ java/org/exolab/castor/xml/MarshalFramework.java	2023-10-24 18:43:45.194766231 +0000
+@@ -477,10 +477,19 @@
+       final XMLClassDescriptor classDesc) throws MarshalException {
+     Iterator classDescriptorIterator = null;
+ 
++    String className = name;
++    String typeName = name;
++    XMLClassDescriptor cdInheritedByType = null;
+     try {
+       // -- A little required logic for finding Not-Yet-Loaded
+       // -- descriptors
+-      String className = getJavaNaming().toJavaClassName(name);
++      className = getJavaNaming().toJavaClassName(name);
++      // We need to consider cases where javaclassmapping=type
++      //XMLFieldDescriptor xfd = classDesc.getFieldDescriptor(name, namespace, null);
++      XMLFieldDescriptor xfd = classDesc.getFieldDescriptor(name, null, null);
++      if (xfd != null) {
++        typeName = xfd.getFieldType().getName();
++      }
+       // -- should use namespace-to-prefix mappings, but
+       // -- just create package for now.
+       Class clazz = classDesc.getJavaClass();
+@@ -498,11 +507,14 @@
+       }
+       getInternalContext().getXMLClassDescriptorResolver().resolve(className,
+           classDesc.getClass().getClassLoader());
++      getInternalContext().getXMLClassDescriptorResolver().resolve(typeName,
++          classDesc.getClass().getClassLoader());
+       // -- end Not-Yet-Loaded descriptor logic
+ 
+       // -- resolve all by XML name + namespace URI
+       classDescriptorIterator = getInternalContext().getXMLClassDescriptorResolver()
+           .resolveAllByXMLName(name, namespace, null);
++      cdInheritedByType = getInternalContext().getXMLClassDescriptorResolver().resolve(typeName);
+     } catch (ResolverException rx) {
+       Throwable actual = rx.getCause();
+       if (actual instanceof MarshalException) {
+@@ -518,10 +530,19 @@
+     XMLFieldDescriptor descriptor = null;
+     XMLFieldDescriptor[] descriptors = classDesc.getElementDescriptors();
+     XMLClassDescriptor cdInherited = null;
++    boolean typeChecked = false;
+ 
+-    if (classDescriptorIterator.hasNext()) {
+-      while (classDescriptorIterator.hasNext() && (descriptor == null)) {
+-        cdInherited = (XMLClassDescriptor) classDescriptorIterator.next();
++    if (classDescriptorIterator.hasNext() || !typeChecked) {
++      while ((classDescriptorIterator.hasNext() || !typeChecked) && (descriptor == null)) {
++        if (classDescriptorIterator.hasNext()) {
++          cdInherited = (XMLClassDescriptor) classDescriptorIterator.next();
++        } else {
++          typeChecked = true;
++          if (cdInheritedByType == null) {
++            continue;
++          }
++          cdInherited = cdInheritedByType;
++        }
+         Class subclass = cdInherited.getJavaClass();
+ 
+         for (int i = 0; i < descriptors.length; i++) {
+diff -Naur java.orig/org/exolab/castor/xml/Marshaller.java java/org/exolab/castor/xml/Marshaller.java
+--- java.orig/org/exolab/castor/xml/Marshaller.java	2023-10-24 18:43:39.573776409 +0000
++++ java/org/exolab/castor/xml/Marshaller.java	2023-10-24 18:43:45.194766231 +0000
+@@ -242,7 +242,7 @@
+    */
+   private boolean _suppressXSIType = false;
+ 
+-  private boolean _useXSITypeAtRoot = false;
++  private boolean _useXSITypeAtRoot = true;
+ 
+   /**
+    * The set of optional top-level attributes set by the user.
+diff -Naur java.orig/org/exolab/castor/xml/schema/reader/SchemaUnmarshaller.java java/org/exolab/castor/xml/schema/reader/SchemaUnmarshaller.java
+--- java.orig/org/exolab/castor/xml/schema/reader/SchemaUnmarshaller.java	2023-10-24 18:43:39.576776404 +0000
++++ java/org/exolab/castor/xml/schema/reader/SchemaUnmarshaller.java	2023-10-24 18:43:45.194766231 +0000
+@@ -84,6 +84,21 @@
+   public static final String[] UNSUPPORTED_NAMESPACES =
+       {"http://www.w3.org/2000/10/XMLSchema", "http://www.w3.org/1999/XMLSchema"};
+ 
++//  <Alma-Modification> 
++  private static URIResolver s_defaultURIResolver;
++  
++  /**
++   * Sets the default URIResolver to be used if no URIResolver gets passed to the constructor.
++   * <p>
++   * Using a static field is admittedly rather dirty. A better fix would be to allow 
++   * for a URIResolver to be passed on the callstack all the way from SourceGenerator to SchemaUnmarshaller.
++   * @param defaultURIResolver
++   */
++  public static void setDefaultURIResolver(URIResolver defaultURIResolver) {
++      s_defaultURIResolver = defaultURIResolver;
++  }
++// </Alma-Modification>            
++
+   // --------------------/
+   // - Member Variables -/
+   // --------------------/
+@@ -212,11 +227,17 @@
+     if (getResolver() == null) {
+       setResolver(new ScopableResolver());
+     }
++    //<Alma-Modification> 
++    URIResolver uriResolver2 = uriResolver;
+     if (uriResolver == null) {
+-      setURIResolver(new URIResolverImpl());
+-    } else {
+-      setURIResolver(uriResolver);
++      if (s_defaultURIResolver != null) {
++        uriResolver2 = s_defaultURIResolver;
++      } else {
++        uriResolver2 = new URIResolverImpl();
++      }
+     }
++    setURIResolver(uriResolver2);
++    //</Alma-Modification>            
+     foundSchemaDef = true;
+     _state = new SchemaUnmarshallerState();
+     init(atts);

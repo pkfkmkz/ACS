@@ -1,0 +1,23 @@
+#ifndef _ICT_21770_IDL_
+#define _ICT_21770_IDL_
+
+#include <baci.idl>
+
+#pragma prefix "alma"
+module ict21770 {
+    interface ParentCC: ACS::CharacteristicComponent {
+        void printValue1();
+        void printValues();
+        readonly attribute ACS::ROdouble prop1;
+    };
+    interface MiddleCC: ParentCC {
+        void printValue2();
+        readonly attribute ACS::ROdouble prop2;
+    };
+    interface FinalCC: MiddleCC {
+        void printValue3();
+        readonly attribute ACS::ROdouble prop3;
+    };
+};
+
+#endif

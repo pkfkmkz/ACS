@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+  <pluginGroups/>
+  <proxies/>
+  <servers/>
+  <mirrors/>
+  <profiles>
+    <profile>
+      <id>acsbuildfarm</id>
+      <properties>
+        <atALMA>true</atALMA>
+        <skipDeploy>true</skipDeploy>
+      </properties>
+    </profile>
+  </profiles>
+  <activeProfiles>
+    <activeProfile>acsbuildfarm</activeProfile>
+  </activeProfiles>
+</settings>

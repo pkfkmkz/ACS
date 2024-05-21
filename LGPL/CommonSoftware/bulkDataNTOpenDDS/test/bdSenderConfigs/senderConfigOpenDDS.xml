@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BulkDataNTSender
+   xmlns="urn:schemas-cosylab-com:BulkDataNTOpenDDSSender:1.0"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="urn:schemas-cosylab-com:BulkDataNTOpenDDSSender:1.0 BulkDataNTOpenDDSSender.xsd">
+
+	<SenderStream Name="BLA">
+		<SenderFlow Name="ZAMBER1">
+      <DDSSenderFlowQoS>
+        <publisher_qos name="publisher1">
+          <partition>
+            <name>
+              <element>ZAMBER1</element>
+            </name>
+          </partition>
+        </publisher_qos>
+        <topic_qos name="topic1">
+          <liveliness>
+            <kind>AUTOMATIC_LIVELINESS_QOS</kind>
+          </liveliness>
+        </topic_qos>
+        <datawriter_qos name="datawriter1">
+          <durability>
+            <kind>VOLATILE_DURABILITY_QOS</kind>
+          </durability>
+				</datawriter_qos>
+			</DDSSenderFlowQoS>
+		</SenderFlow>
+		<SenderFlow Name="BLA2" SendFrameTimeoutSec="2e-1" ACKsTimeoutSec="6">
+			<DDSSenderFlowQoS>
+				<datawriter_qos name="BLA2">
+				</datawriter_qos>
+			</DDSSenderFlowQoS>
+		</SenderFlow>
+		<DDSSenderStreamQoS participantPerStream="true">
+			<participant_qos name="BLA">
+			</participant_qos>
+		</DDSSenderStreamQoS>
+	</SenderStream>
+	<SenderStream Name="PIPO">
+		<SenderFlow Name="PIPO1" SendFrameTimeoutSec="0.1">
+			<DDSSenderFlowQoS>
+				<datawriter_qos name="PIPO1">
+				</datawriter_qos>
+			</DDSSenderFlowQoS>
+		</SenderFlow>
+		<SenderFlow Name="PIPO3" SendFrameTimeoutSec="0.1" ACKsTimeoutSec="4.3">
+			<DDSSenderFlowQoS>
+				<datawriter_qos name="PIPO3">
+				</datawriter_qos>
+			</DDSSenderFlowQoS>
+		</SenderFlow>
+		<DDSSenderStreamQoS participantPerStream="false"/>
+	</SenderStream>
+
+</BulkDataNTSender>

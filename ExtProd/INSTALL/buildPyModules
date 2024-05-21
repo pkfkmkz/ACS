@@ -1,0 +1,116 @@
+#! /bin/bash
+#*******************************************************************************
+# E.S.O. - ALMA project
+#
+# "@(#) $Id$"
+#
+# who        when        what
+# --------   ----------  ----------------------------------------------
+# agrimstrup 2007-07-10  created
+#
+
+#************************************************************************
+#   NAME
+#
+#   SYNOPSIS
+#
+#   DESCRIPTION
+#
+#   FILES
+#
+#   ENVIRONMENT
+#
+#   RETURN VALUES
+#
+#   CAUTIONS
+#
+#   EXAMPLES
+#
+#   SEE ALSO
+#
+#   BUGS
+#
+#------------------------------------------------------------------------
+#
+
+#
+# Install Python Modules
+#
+#set -x
+#export PYTHON_ROOT=/alma/$ALMASW_RELEASE/Python
+
+# Load functions
+. standardUtilities
+#
+# Fetch operating system and release version
+#
+os_discovery
+
+LOG=buildPyModules.log
+CWD=`pwd`
+#
+exec > $LOG 2>&1
+
+date
+
+PIP_VER=23.2.1
+
+if [ ! -d $PYTHON_ROOT ]
+then
+  echo "$PYTHON_ROOT not found, cannot continue..."
+  exit 1
+fi
+
+echo installing Python Modules
+
+echo $SEPARATOR
+if [ ${OS} = "LINUX" ] 
+then
+	echo "Installing on $DISTRO $OS version $REL"
+else
+	echo "Installing on $OS version $REL"
+fi
+
+if [     ${DISTRO}-${REL} != "SOLARIS-5.8"       \
+     -a  ${DISTRO}-${REL} != "RHLX-7.2"           \
+     -a  ${DISTRO}-${REL} != "RHLX-7.3"           \
+     -a  ${DISTRO}-${REL} != "RHLX-9"           \
+     -a  ${DISTRO}-${REL} != "RHEL-4"           \
+     -a  ${DISTRO}-${REL} != "RHEL-5"           \
+     -a  ${DISTRO}-${REL} != "RHEL-5.3"           \
+     -a  ${DISTRO}-${REL} != "SL-4.1"           \
+     -a  ${DISTRO}-${REL} != "SL-5.3"           \
+   ]
+then
+    echo "OS not supported. Proceeding as for Linux RH 9"
+    echo ""
+fi
+
+#
+# PyEnv
+#
+# Notes: See README for help
+#
+cd ../PRODUCTS
+
+eval "$(pyenv init --path)"
+eval "$(pyenv init -)"
+pip install --progress-bar off --force-reinstall --upgrade pip==$PIP_VER || { echo "FAILED: Installing pip $PIP_VER" && exit 1; }
+pip config --site set global.disable-pip-version-check true
+pip install --progress-bar off --force-reinstall -r acs-py.req || { echo "FAILED: Installing Python 3 ACS Requirements (req)" && exit 1; }
+#patch -p1 -d $(pip show pip |grep Location |awk '{print $2}')/pip < ../PRODUCTS/pip.patch || { echo "Failed to apply patch for Pip" && exit 1; }
+patch -p1 -d $(pip show PyXB-new |grep Location |awk '{print $2}')/pyxb < ../PRODUCTS/pyxb.patch || { echo "Failed to apply patch for PyXB" && exit 1; }
+cp acs-py.req $(python-config --prefix)/acs-py.req
+
+cd $CWD
+result=$(grep Failed ${LOG}|wc -l)
+if [ $result -gt 0 ]
+then
+    echo "Python Module installation fail."
+    date
+    exit 1
+else
+    echo "Python Module installation done."
+fi
+
+date

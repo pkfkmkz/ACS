@@ -1,0 +1,34 @@
+#ifndef _NC_BENCHMARK_IDL_
+#define _NC_BENCHMARK_IDL_
+
+#include <baci.idl>
+
+#pragma prefix "alma"
+
+#pragma DCPS_DATA_TYPE "NC_BENCHMARK::Message"
+#pragma DCPS_DATA_KEY "NC_BENCHMARK::Message seqnum"
+
+module NC_BENCHMARK{
+
+	const short MAX_MSG_LENGTH = 16384;
+	const string CHANNEL_NAME = "DDSEvent";
+  	const long DOMAIN_ID = 411;
+	typedef sequence<octet, MAX_MSG_LENGTH> dataT;
+
+	struct Message{
+		long seqnum;
+		unsigned long long time;
+		dataT data;
+	};
+
+
+	interface testNCSupplier : ACS::ACSComponent{
+
+		void runTest(in unsigned long frequency, in unsigned long duration);
+
+	};
+
+};
+
+
+#endif

@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!--
+   - History:
+   -   Fri Apr 30 11:35:05 UTC 2021 modified by jDAL
+-->
+<BulkDataNTReceiver xmlns="urn:schemas-cosylab-com:BulkDataNTOpenDDSReceiver:1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:schemas-cosylab-com:BulkDataNTOpenDDSReceiver:1.0 BulkDataNTOpenDDSReceiver.xsd">
+	<ReceiverStream Name="TestStream" participantPerStream="true">
+		<ReceiverFlow Name="FullResolutionDataFlow">
+			<DDSReceiverFlowQoS>
+				<subscriber_qos>
+					<partition xmlns="http://www.omg.org/dds">
+						<name>
+							<element />
+						</name>
+					</partition>
+				</subscriber_qos>
+			</DDSReceiverFlowQoS>
+		</ReceiverFlow>
+    		<ReceiverFlow Name="ChannelAverageDataFlow">
+			<DDSReceiverFlowQoS>
+				<subscriber_qos>
+					<partition xmlns="http://www.omg.org/dds">
+						<name>
+							<element />
+						</name>
+					</partition>
+				</subscriber_qos>
+			</DDSReceiverFlowQoS>
+		</ReceiverFlow>
+		<ReceiverFlow Name="WVRDataFlow">
+			<DDSReceiverFlowQoS>
+				<subscriber_qos>
+					<partition xmlns="http://www.omg.org/dds">
+						<name>
+							<element />
+						</name>
+					</partition>
+				</subscriber_qos>
+			</DDSReceiverFlowQoS>
+    </ReceiverFlow>
+		<DDSReceiverStreamQoS baseQosLibrary="BulkDataQoSLibrary" />
+	</ReceiverStream>
+</BulkDataNTReceiver>

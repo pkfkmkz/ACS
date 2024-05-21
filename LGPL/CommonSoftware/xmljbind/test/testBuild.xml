@@ -1,0 +1,41 @@
+<project name="CodegenTaskdefs" default="generateBindingClasses" basedir="..">
+
+	<property name="ACSROOT" value="${env.ACSROOT}" />
+	<property name="acslib" value="${ACSROOT}/lib" />
+	<property name="javalib" value="${env.ACSDEPS}/lib" />
+
+	<target name="taskdefSchemaBindingGenerate">  
+		<taskdef name="generateSchemaBinding" classname="alma.tools.entitybuilder.ant.EntityBuilderTask">
+			<classpath>
+				<fileset dir="${modlib}">
+				<include name=".jar" />
+				</fileset>
+				<fileset dir="${acslib}">
+					<include name="jakarta-regexp-1.2.jar" />
+					<include name="commons-logging.jar" />
+					<include name="jACSUtil.jar" />
+					<include name="xmljbind.jar" />
+				</fileset>
+				<fileset dir="${javalib}">
+					<include name="castor-1.4.1.jar" /> 
+					<include name="oro-2.0.8.jar" />
+					<include name="xercesImpl-2.12.2-acs.jar" />
+				</fileset>
+			</classpath>
+		</taskdef>    
+	</target>
+
+	<target name="generateBindingClasses" depends="taskdefSchemaBindingGenerate">
+		<generateSchemaBinding 
+			xsdBindConfigFile="${xsdBindConfigAPDM}"
+			javaOutputDir="${build.src}/castor" 
+			verbose="false"
+			>
+			<xsdIncludedConfigFile filename="systementities.xml"/>
+			<xsdIncludeDir dir="${build.src}/xsd"/>
+			<xsdIncludeDir dir="${INTROOT}/idl"/>
+			<xsdIncludeDir dir="${ACSROOT}/idl"/>
+		</generateSchemaBinding>
+	</target>
+	
+</project>

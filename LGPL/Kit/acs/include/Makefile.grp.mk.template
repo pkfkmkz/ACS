@@ -1,0 +1,57 @@
+#%# #*******************************************************************************
+#%# #
+#%# #      REMARK: This file belongs to the "acsMake" module.
+#%# #
+#%#
+#%# This file has been prepared to be pre-processed by "getTemplate".
+#%# If you are using it by hand, please:
+#%#        - remove all lines starting with #%#
+#%#        - delete ">-<" in "$I>-<d$"
+#%#
+
+#*******************************************************************************
+# PPPPPPPP
+#
+# "@(#) $I>-<d$"
+#
+# Makefile of ........
+#
+# who       when      what
+# --------  --------  ----------------------------------------------
+# NNNNNNNN  dd/mm/yy  created
+#
+
+# ALMA - Atacama Large Millimeter Array
+# Copyright (c) ESO - European Southern Observatory, 2014
+# (in the framework of the ALMA collaboration).
+# All rights reserved.
+# 
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+# 
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# Lesser General Public License for more details.
+# 
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+#*******************************************************************************
+
+#*******************************************************************************
+# This Makefile follows ALMA/ACS Standards (see Makefile(5) for more).
+#*******************************************************************************
+# REMARKS
+#    None
+#------------------------------------------------------------------------
+
+MAKEID:=acs
+MAKEDIR:=$(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
+GRP_PATH:=$(MAKEDIR)
+GRP_NAME:=$(notdir $(GRP_PATH))
+MAKEDIRTMP:=$(shell searchFile include/InclusiveMakefile.mk)/include
+$(if $(filter #error#%,$(MAKEDIRTMP)),$(error "InclusiveMakefile.mk was not found."),$(eval include $(MAKEDIRTMP)/InclusiveMakefile.mk))
+$(eval $(call genGroup,$(GRP_NAME),$(GRP_PATH)))

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<p:BulkDataNTSender actionThreadStackSize="1024" monitoringThreadMaxStartDelay="0" monitoringThreadStackSize="2048" recentCommand="" recentTimeStamp="" xmlns:p="urn:schemas-cosylab-com:BulkDataNTSender:1.0" xmlns:p1="urn:schemas-cosylab-com:BACI:1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:schemas-cosylab-com:BulkDataNTSender:1.0 BulkDataNTSender.xsd ">
+  <p:SenderStream Name="" participantPerStream="false">
+    <p:SenderFlow ACKsTimeoutSec="1.0" Name="" SendFrameTimeoutSec="5.0" ThrottlingMBytesPerSec="0.0">
+      <p:DDSSenderFlowQoS baseQosLibrary="BulkDataQoSLibrary" baseQosProfile="SenderFlowDefaultQosProfile"/>
+    </p:SenderFlow>
+    <p:DDSSenderStreamQoS baseQosLibrary="BulkDataQoSLibrary" baseQosProfile="SenderStreamDefaultQosProfile"/>
+  </p:SenderStream>
+</p:BulkDataNTSender>

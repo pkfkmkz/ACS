@@ -1,0 +1,41 @@
+#!/bin/bash
+# -*- ksh -*-
+# $Id: alarmsDefGUI,v 1.6 2011/11/30 22:54:32 jschwarz Exp $
+#
+# DESCRIPTION
+#    Starts the ACS Alarms Definition GUI
+#
+#
+# OPTIONS
+#    No options
+#
+#
+# AUTHOR
+#    Joseph Schwarz, 30 June 2010
+
+. acsstartupAcsPorts
+. acsstartupConstants
+. acsstartupAcsInstance
+
+#Set the port numbers...
+ACS_MANAGER_PORT=`getManagerPort`
+export HOST=`getIP`
+
+if [ X"$MANAGER_REFERENCE" = X ]; then  
+   export MANAGER_REFERENCE=corbaloc::$HOST:$ACS_MANAGER_PORT/Manager
+fi
+
+ACS_LOG_DEBUG "acsStartJava" "ACS Manager: $MANAGER_REFERENCE"
+
+dir=$(searchFile bin/alarmsDefGUI)
+
+$dir/lib/alarms-def-gui/alarms-def-gui \
+     -consoleLog \
+     -vmargs \
+     --add-opens java.xml/com.sun.org.apache.xml.internal.serialize=ALL-UNNAMED \
+     -DACS.manager=$MANAGER_REFERENCE \
+     -DACS.tmp=$ACS_TMP \
+     -Djacorb.log.initializer=alma.acs.logging.adapters.AcsJacorbLoggingInitializer \
+     -DACS.log.minlevel.namedloggers="jacorb@alarmsDefGUI=5,5:scxml@alarmsDefGUI=5,5" \
+     -Dorg.apache.commons.logging.LogFactory=alma.acs.logging.adapters.CommonsLoggingFactory \
+     $JAVA_OPTIONS

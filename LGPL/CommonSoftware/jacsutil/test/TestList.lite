@@ -1,0 +1,44 @@
+#*******************************************************************************
+# ALMA - Atacama Large Millimiter Array
+# (c) European Southern Observatory, 2002
+# Copyright by ESO (in the framework of the ALMA collaboration),
+# All rights reserved
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, 
+# MA 02111-1307  USA
+#
+
+1 ClassLoading "jacsutilTATRunner alma.acs.classloading.TestMain myRunArg1"
+
+# AcsComponentClassLoaderEnduranceTest currently only run by hand.
+# Note that in case of OutOfMemoryError, we do not seem to get a dump even when setting the JVM properties -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath, and -XX:ErrorFile
+#2 AcsComponentClassLoaderEnduranceTest "jacsutilTATRunner org.junit.runner.JUnitCore alma.acs.classloading.AcsComponentClassLoaderEnduranceTest"
+
+3 TopologicalSortTest "jacsutilTATRunner alma.acs.testsupport.tat.TATJUnitRunner alma.acs.algorithms.TopologicalSortTest"
+4 GenTest "jacsutilTATRunner alma.acs.testsupport.tat.TATJUnitRunner alma.acs.jhelpgen.GenTest"
+5 StopWatchTest "jacsutilTATRunner alma.acs.testsupport.tat.TATJUnitRunner alma.acs.util.StopWatchTest"
+6 DateConversionTest "jacsutilTATRunner alma.acs.testsupport.tat.TATJUnitRunner alma.acs.util.DateConversionTest"
+7 IsoDateFormatTest "jacsutilTATRunner alma.acs.testsupport.tat.TATJUnitRunner alma.acs.util.IsoDateFormatTest"
+8 XmlNormalizerTest "jacsutilTATRunner alma.acs.testsupport.tat.TATJUnitRunner alma.acs.util.XmlNormalizerTest"
+9 AcsFileFinderForDirectoriesTest "jacsutilTATRunner alma.acs.testsupport.tat.TATJUnitRunner alma.acs.util.AcsFileFinderForDirectoriesTest"
+10 ThreadBurstExecutorServiceTest "jacsutilTATRunner alma.acs.testsupport.tat.TATJUnitRunner alma.acs.concurrent.ThreadBurstExecutorServiceTest"
+11 ThreadLoopRunnerTest "jacsutilTATRunner alma.acs.testsupport.tat.TATJUnitRunner alma.acs.concurrent.ThreadLoopRunnerTest"
+12 AcsLocationsTest "jacsutilTATRunner alma.acs.testsupport.tat.TATJUnitRunner alma.acs.util.AcsLocationsTest"
+13 LauncherTest "jacsutilTATRunner alma.acs.testsupport.tat.TATJUnitRunner alma.acs.vmtools.LauncherTest"
+14 LogRecordCollectingLoggerTest "jacsutilTATRunner alma.acs.testsupport.tat.TATJUnitRunner alma.acs.testsupport.LogRecordCollectingLoggerTest"
+15 ProcessUtilTest "jacsutilTATRunner alma.acs.testsupport.tat.TATJUnitRunner alma.acs.testsupport.ProcessUtilTest"
+16 RemoteThreadsClientTest "jacsutilTATRunner -Djdk.attach.allowAttachSelf=true alma.acs.testsupport.tat.TATJUnitRunner alma.acs.monitoring.RemoteThreadsClientTest"
+17 RemoteThreadsMBeanTest "jacsutilTATRunner -Djdk.attach.allowAttachSelf=true alma.acs.testsupport.tat.TATJUnitRunner alma.acs.monitoring.RemoteThreadsMBeanTest"
+18 TestJarOrderOptimizer "jacsutilTATRunner alma.acs.classloading.TestJarOrderOptimizer"

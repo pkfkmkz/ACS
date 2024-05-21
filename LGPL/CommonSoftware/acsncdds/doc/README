@@ -1,0 +1,236 @@
+*/ Introduction to acsncdds/OpenDDS
+*
+* author Danilo C. Zanella <danilo.zanella[at]iag.usp.br>
+* Date: 05/Fev/2021
+*
+*/
+
+
+DCPS : Data Centric Public and Subscribe
+RTPS: 
+
+1.0) Objective:
+  This module are helpers classes to create communications channels in ACS using OpenDDS middleware.
+  It creates a pair publisher and subscriber with a data type.
+
+2.0) Introdution:
+
+   OpenDDS uses the IDL interfaces defined by the DDS specification to initialize and control service
+  usage. Data transmission is accomplished via an OpenDDS-specific transport framework that allows the
+  service to be used with a variety of transport protocols. This is referred to as pluggable transports
+  and makes the extensibility of OpenDDS an important part of its architecture.
+
+             
+             ┌───────────────────────────────┐    ┌───────────────────────────────┐
+             │                               │    │                               │
+             │        Application A          │    │        Application B          │
+             │                               │    │                               │
+             │                               │    │                               │
+             │                               │    │                               │
+             │   ┌───────────────────────┐   │    │   ┌───────────────────────┐   │
+             │   │    DCPS Publisher     │   │    │   │    DCPS Subscriber    │   │
+             │   │                       │   │    │   │                       │   │
+             │   └───────┐               │   │    │   └───────┐               │   │
+             │           │               │   │    │           │               │   │
+             │   ┌─────┐ │               │   │    │   ┌─────┐ │               │   │
+             │   │ QoS │ │               │   │    │   │ QoS │ │               │   │
+             │   └─────┘ └───────────────┘   │    │   └─────┘ └───────────────┘   │
+             │                               │    │                               │
+             │   ┌───────────┐ ┌─────────┐   │    │   ┌───────────┐ ┌─────────┐   │
+             │   │ Transport │ │Discovery│   │    │   │ Transport │ │Discovery│   │
+             │   └───┬───────┘ └─────┬───┘   │    │   └───┬───────┘ └─────┬───┘   │
+             │       │               │       │    │       │               │       │
+             │       └───────┬───────┘       │    │       └───────┬───────┘       │
+             │               │               │    │               │               │
+             └───────────────┼───────────────┘    └───────────────┼───────────────┘
+                             │                                    │
+                             ▼                                    ▼
+                             └────────────────────────────────────┘
+                                             Network
+
+                             Diagram of Extensible Transport Framework
+
+  Pluggable Transport can be: TCP, UDP, Multicast, Shared-Memory, RTPS-UDP
+
+  Pluggable Discovery can be: Centralized Repository (InfoRepo) or Peer-to-Peer (RTPS)
+
+3.0) Differences between DCPS InfoRepo and RTPS
+
+    The next image show two OpenDDS application using a centralized DCPS InfoRepo.
+    The Publisher advertise the Central InfoRepo that will be publish a specific topic
+  during the discovery process. The Subscriber informs to Central InfoRepo that is
+  able to receive that topic. Finally, using the transport layer the publisher submit
+  data.
+
+             ┌───────────────────────────────┐    ┌───────────────────────────────┐
+             │                               │    │                               │
+             │        Application A          │    │        Application B          │
+             │                               │    │                               │
+             │                               │    │                               │
+             │                               │    │                               │
+             │   ┌───────────────────────┐   │    │   ┌───────────────────────┐   │
+             │   │    DCPS Publisher     │   │    │   │    DCPS Subscriber    │   │
+             │   │                       │   │    │   │                       │   │
+             │   └───────┐               │   │    │   └───────┐               │   │
+             │           │               │   │    │           │               │   │
+             │   ┌─────┐ │               │   │    │   ┌─────┐ │               │   │
+             │   │ QoS │ │               │   │    │   │ QoS │ │               │   │
+             │   └─────┘ └───────────────┘   │    │   └─────┘ └───────────────┘   │
+             │                               │    │                               │
+             │   ┌─────────┐ ┌───────────┐   │    │   ┌───────────┐ ┌─────────┐   │
+             │   │Discovery│ │ Transport │   │    │   │ Transport │ │Discovery│   │
+             │   └────┬────┘ └─────┬─────┘   │    │   └───────────┘ └────┬────┘   │
+             │        │            │         │    │          ▲           │        │
+             │        │            │         │    │          │           │        │
+             │        │            │         │    │          │           │        │
+             └────────┼────────────┼─────────┘    └──────────┼───────────┼────────┘
+                      │            │       3. Publish        │           │ 2. Discover
+          1. Advertise│            └─────────────────────────┘           │    Topic
+             Topic    │                                                  │
+                      │                 ┌───────────────┐                │
+                      └────────────────►│ DCPS InfoRepo │◄───────────────┘
+                                        └───────────────┘
+  
+    As each participating process activates the DDSI-RTPS discovery mechanisms in OpenDDS
+  for their data readers and writers, network endpoints are created with either default
+  or configured network ports such that DDS participants can begin advertising the availability
+  of their data readers and data writers. After a period of time, those seeking one another
+  based on criteria will find each other and establish a connection based on the configured
+  pluggable transport as discussed in Extensible Transport Framework (ETF).
+  
+
+            ┌───────────────────────────────┐    ┌───────────────────────────────┐
+            │                               │    │                               │
+            │        Application A          │    │        Application B          │
+            │                               │    │                               │
+            │                               │    │                               │
+            │                               │    │                               │
+            │   ┌───────────────────────┐   │    │   ┌───────────────────────┐   │
+            │   │    DCPS Publisher     │   │    │   │    DCPS Subscriber    │   │
+            │   │                       │   │    │   │                       │   │
+            │   └───────┐               │   │    │   └───────┐               │   │
+            │           │               │   │    │           │               │   │
+            │   ┌─────┐ │               │   │    │   ┌─────┐ │               │   │
+            │   │ QoS │ │               │   │    │   │ QoS │ │               │   │
+            │   └─────┘ └───────────────┘   │    │   └─────┘ └───────────────┘   │
+            │                               │    │                               │
+            │   ┌─────────┐ ┌───────────┐   │    │   ┌───────────┐ ┌─────────┐   │
+            │   │Discovery│ │ Transport │   │    │   │ Transport │ │Discovery│   │
+            │   └────┬────┘ └─────┬─────┘   │    │   └───────────┘ └────┬────┘   │
+            │        │            │         │    │          ▲           │        │
+            │        │            │         │    │          │           │        │
+            │        │            │         │    │          │           │        │
+            └────────┼────────────┼─────────┘    └──────────┼───────────┼────────┘
+                     │            │       3. Publish        │           │ 2. Discover
+         1. Advertise│            └─────────────────────────┘           │    Topic
+            Topic    │                                                  │
+                     │                                                  │
+                     └──────────────────────────────────────────────────┘
+                                             RTPS
+         
+         
+  The RTPS protocol is designed to be able to run over multicast and connectionless best-effort
+  transports such as UDP/IP. The main features of the RTPS protocol include:
+  - Performance and quality-of-service properties to enable best-effort and reliable publish-subscribe
+    communications for real-time applications over standard IP networks.
+  - Fault tolerance to allow the creation of networks without single points of failure.
+  - Extensibility to allow the protocol to be extended and enhanced with new services without breaking
+    backwards compatibility and interoperability.
+  - Plug-and-play connectivity so that new applications and services are automatically discovered and
+    applications can join and leave the network at any time without the need for reconfiguration.
+  - Configurability to allow balancing the requirements for reliability and timeliness for each datadelivery.
+  - Modularity to allow simple devices to implement a subset of the protocol and still participate in the network.
+  - Scalability to enable systems to potentially scale to very large networks.
+  - Type-safety to prevent application programming errors from compromising the operation of remote nodes
+
+     Domain
+
+     The domain is the fundamental partitioning unit within DCPS. Each of the other entities belongs to a domain and
+  can only interact with other entities in that same domain. Application code is free to interact with multiple
+  domains but must do so via separate entities that belong to the different domains. 
+
+     DomainParticipant
+
+     A domain participant is the entry-point for an application to interact within a particular domain. The domain
+  participant is a factory for many of the objects involved in writing or reading data.
+   
+     Topic
+
+     The topic is the fundamental means of interaction between publishing and subscribing applications. Each topic
+   has a unique name within the domain and a specific data type that it publishes. Each topic data type can specify
+   zero or more fields that make up its key. When publishing data, the publishing process always specifies the topic.
+   Subscribers request data via the topic. In DCPS terminology you publish individual data samples for different
+   instances on a topic. Each instance is associated with a unique value for the key. A publishing process publishes
+   multiple data samples on the same instance by using the same key value for each sample.
+
+     DataWriter
+
+     The data writer is used by the publishing application code to pass values to the DDS. Each data writer is bound
+   to a particular topic. The application uses the data writer’s type-specific interface to publish samples on that
+   topic. The data writer is responsible for marshaling the data and passing it to the publisher for transmission.
+
+     Publisher
+
+   The publisher is responsible for taking the published data and disseminating it to all relevant subscribers in
+   the domain. The exact mechanism employed is left to the service implementation.
+
+     Subscriber
+
+   The subscriber receives the data from the publisher and passes it to any relevant data readers that are connected
+   to it.
+
+     DataReader
+
+   The data reader takes data from the subscriber, demarshals it into the appropriate type for that topic, and delivers
+   the sample to the application. Each data reader is bound to a particular topic. The application uses the data reader’s
+   type-specific interfaces to receive the samples.
+
+     The following pictures shows this structure.
+                                                                                                                                                                              +-----------------------------------------------------------------------------------------------+
+     |                                                                                               |
+     |                                            DOMAIN                                             |
+     |                                                                                               |
+     |                                                                                               |
+     |                                                 +-------------------------------------+       |
+     |                                                 |                                     |       |
+     |                 +--------------+    +-----------+--+        +--------------+          |       |
+     |       +---------+ DataWriter B |    | DataWriter A |        | DataWriter A +-----+    |       |
+     |       |         +-----------+--+    +-+------------+        +-+------------+     |    |       |
+     |       |                     |         |                       |                  |    |       |
+     |       |                     v         v                       v                  |    |       |
+     |       |                   +-------------+          +-------------+               |    |       |
+     |       |                   | Publisher 1 |          | Publisher 2 |               |    |       |
+     |       |                   +----------+--+          ++------------+               |    |       |
+     |       |                              |              |                            |    |       |
+     |       v                              v              v                            v    v       |
+     | +----------+                    +--------------------------+                   +----------+   |
+     | |          |                    |                          |                   |          |   |
+     | | Topic B  |                    |    Data Transmission     |                   | Topic A  |   |
+     | |          |                    |                          |                   |          |   |
+     | +----------+                    +--------------------------+                   +----------+   |
+     |    ^    ^                            ^              ^                               ^         |
+     |    |    |                            |              |                               |         |
+     |    |    |                +-----------+--+         +-+------------+                  |         |
+     |    |    |                | Subscriber 1 |         | Subscriber 2 |                  |         |
+     |    |    |                +--------------+         +--------------+                  |         |
+     |    |    |                    ^                       ^         ^                    |         |
+     |    |    |                    |                       |         |                    |         |
+     |    |    |        +-----------+--+        +-----------+-+     +-+----------+         |         |
+     |    |    +--------+ DataReader B |        |DataReader B |     |DataReader A+---------+         |
+     |    |             +--------------+        +-+-----------+     +------------+                   |
+     |    |                                       ^                                                  |                                                                        |    |                                       |                                                  |
+     |    +---------------------------------------+                                                  |
+     |                                                                                               |
+     +-----------------------------------------------------------------------------------------------+
+
+
+  Futher information consult:
+  http://download.objectcomputing.com/OpenDDS/OpenDDS-latest.pdf
+
+4.0) Limitations:
+  Current implementation of this module has the following known limitations:
+  - Use the RTPS discovery
+  - It can handle only one topic/type by communication channel
+
+
+

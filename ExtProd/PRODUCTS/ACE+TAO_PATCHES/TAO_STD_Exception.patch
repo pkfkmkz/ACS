@@ -1,0 +1,91 @@
+--- TAO.orig/ACE_TAO/TAO/tao/Exception.cpp 2022-01-20 09:26:54 +0100
++++ TAO/ACE_TAO/TAO/tao/Exception.cpp 2023-01-30 14:58:41 +0000
+@@ -33,12 +33,14 @@ CORBA::Exception::Exception (const char * repository_id,
+   : id_ (CORBA::string_dup (repository_id)),
+     name_ (CORBA::string_dup (local_name))
+ {
++  this->fqdn();
+ }
+ 
+ CORBA::Exception::Exception (const CORBA::Exception &src)
+   : id_ (CORBA::string_dup (src.id_)),
+     name_ (CORBA::string_dup (src.name_))
+ {
++  this->fqdn();
+ }
+ 
+ // NOTE: It's this code, not anything defined in a subclass, which is
+@@ -52,11 +54,34 @@ CORBA::Exception::operator= (const CORBA::Exception &src)
+     {
+       this->id_ = CORBA::string_dup (src.id_);
+       this->name_ = CORBA::string_dup (src.name_);
++      this->fqdn_ = CORBA::string_dup (src.fqdn_);
+     }
+ 
+   return *this;
+ }
+ 
++void
++CORBA::Exception::fqdn()
++{
++  std::string efqdn(this->id_);
++  std::size_t ipos = efqdn.find('/');
++  std::size_t npos = efqdn.find_last_of(':');
++  if (ipos != std::string::npos && npos != std::string::npos)
++    efqdn = efqdn.substr(ipos+1, npos-ipos-1);
++  ipos = efqdn.find('/');
++  while (ipos != std::string::npos) {
++      efqdn = efqdn.substr(0, ipos) + std::string("::") + efqdn.substr(ipos+1);
++      ipos = efqdn.find('/');
++  }
++  this->fqdn_ = CORBA::string_dup(efqdn.c_str());
++}
++
++const char*
++CORBA::Exception::what() const noexcept
++{
++  return this->fqdn_;
++}
++
+ const char *
+ CORBA::Exception::_rep_id () const
+ {
+--- TAO.orig/ACE_TAO/TAO/tao/Exception.h 2022-01-20 09:26:54 +0100
++++ TAO/ACE_TAO/TAO/tao/Exception.h 2023-01-30 14:58:41 +0000
+@@ -94,7 +94,7 @@ namespace CORBA
+     *       defer doing this until we drop support for MSVC++ 7.1. Maybe
+     *       there is another solution, have to test that later.
+     */
+-  class TAO_Export Exception
++  class TAO_Export Exception : public std::exception
+   {
+   public:
+
+@@ -112,6 +112,8 @@ namespace CORBA
+     /// Destructor.
+     virtual ~Exception () = default;
+ 
++    virtual const char* what() const noexcept;
++
+     // = To throw the exception (when using the standard mapping).
+     virtual void _raise () const = 0;
+ 
+@@ -189,12 +191,18 @@ namespace CORBA
+     /// Construct from a repository id.
+     Exception (const char *repository_id, const char *local_name);
+ 
++    /// Create fully qualified domain name from repository id
++    virtual void fqdn();
++
+   private:
+     /// Repository Id
+     CORBA::String_var id_;
+ 
+     /// Local name.
+     CORBA::String_var name_;
++
++    /// Fully qualified name. i.e.: CORBA::TRANSIENT
++    CORBA::String_var fqdn_;
+   };
+ 
+ #if !defined (ACE_LACKS_IOSTREAM_TOTALLY)

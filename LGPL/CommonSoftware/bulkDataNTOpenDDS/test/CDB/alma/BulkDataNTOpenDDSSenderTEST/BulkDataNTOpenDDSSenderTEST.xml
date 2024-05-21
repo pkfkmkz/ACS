@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!--<BulkDataNTSender xmlns="urn:schemas-cosylab-com:BulkDataNTOpenDDSSender:1.0" xsi:schemaLocation="http://www.omg.org/dds dds_qos.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:schemas-cosylab-com:BulkDataNTOpenDDSSender:1.0 BulkDataNTOpenDDSSender.xsd">
+   - History:
+   -   Fri Apr 30 11:35:36 UTC 2021 modified by jDAL
+-->
+<BulkDataNTSender xmlns="urn:schemas-cosylab-com:BulkDataNTOpenDDSSender:1.0" xmlns:opendds="http://www.omg.org/dds" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:schemas-cosylab-com:BulkDataNTOpenDDSSender:1.0 BulkDataNTOpenDDSSender.xsd">
+	<SenderStream Name="TestStream" participantPerStream="false">
+		<SenderFlow Name="FullResolutionDataFlow">
+			<DDSSenderFlowQoS>
+				<publisher_qos>
+					<partition xmlns="http://www.omg.org/dds">
+						<name>
+							<element />
+						</name>
+					</partition>
+				</publisher_qos>
+			</DDSSenderFlowQoS>
+		</SenderFlow>
+		<SenderFlow Name="ChannelAverageDataFlow">
+			<DDSSenderFlowQoS>
+				<publisher_qos>
+					<partition xmlns="http://www.omg.org/dds">
+						<name>
+							<element />
+						</name>
+					</partition>
+				</publisher_qos>
+			</DDSSenderFlowQoS>
+		</SenderFlow>
+		<SenderFlow Name="WVRDataFlow">
+			<DDSSenderFlowQoS>
+				<publisher_qos>
+					<partition xmlns="http://www.omg.org/dds">
+						<name>
+							<element />
+						</name>
+					</partition>
+				</publisher_qos>
+			</DDSSenderFlowQoS>
+		</SenderFlow>
+	</SenderStream>
+</BulkDataNTSender>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Components xmlns="urn:schemas-cosylab-com:Components:1.0"
+            xmlns:cdb="urn:schemas-cosylab-com:CDB:1.0" 
+            xmlns:baci="urn:schemas-cosylab-com:BACI:1.0" 
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <e Name="PARENT1" Code="ParentCC" Type="IDL:alma/ict21770/ParentCC:1.0" Container="cppContainer" ImplLang="cpp"/>
+  <e Name="MIDDLE1" Code="MiddleCC" Type="IDL:alma/ict21770/MiddleCC:1.0" Container="cppContainer" ImplLang="cpp"/>
+  <e Name="FINAL1"  Code="FinalCC"  Type="IDL:alma/ict21770/FinalCC:1.0"  Container="cppContainer" ImplLang="cpp"/>
+
+  <e Name="PARENT2" Code="alma.ict21770.ParentCCImpl.ParentCCComponentHelper" Type="IDL:alma/ict21770/ParentCC:1.0" Container="javaContainer" ImplLang="java"/>
+  <e Name="MIDDLE2" Code="alma.ict21770.MiddleCCImpl.MiddleCCComponentHelper" Type="IDL:alma/ict21770/MiddleCC:1.0" Container="javaContainer" ImplLang="java"/>
+  <e Name="FINAL2"  Code="alma.ict21770.FinalCCImpl.FinalCCComponentHelper"  Type="IDL:alma/ict21770/FinalCC:1.0"  Container="javaContainer" ImplLang="java"/>
+
+  <e Name="PARENT3" Code="ict21770i.ParentCCImpl" Type="IDL:alma/ict21770/ParentCC:1.0" Container="pyContainer" ImplLang="py"/>
+  <e Name="MIDDLE3" Code="ict21770i.MiddleCCImpl" Type="IDL:alma/ict21770/MiddleCC:1.0" Container="pyContainer" ImplLang="py"/>
+  <e Name="FINAL3"  Code="ict21770i.FinalCCImpl"  Type="IDL:alma/ict21770/FinalCC:1.0"  Container="pyContainer" ImplLang="py"/>
+
+</Components>
+
+

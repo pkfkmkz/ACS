@@ -1,0 +1,82 @@
+#! /bin/bash
+#*******************************************************************************
+# E.S.O. - ALMA project
+#
+# "@(#) $Id: buildEclipse,v 1.5 2012/01/09 14:39:47 tstaig Exp $"
+#
+# who       when        what
+# --------  ----------  ----------------------------------------------
+# jschwarz    02/10/2009
+
+# Load functions
+. standardUtilities
+#
+# Fetch operating system and release version
+#
+os_discovery
+
+LOG=buildEclipse.log
+exec > $LOG 2>&1
+
+date
+
+CURR_DIR=`pwd`
+
+if [ "$OS" = "LINUX" ]
+then 
+  OSTAG=linux
+elif [ "$OS" = "$CYGWIN_VER" ]
+then
+  OSTAG=cygwin
+else
+  echo "OS $OS not supported"
+  exit -1
+fi
+
+echo "Installing Eclipse for $OSTAG"
+echo 
+
+ARCH=`getconf LONG_BIT`
+# Deduce the zipfile suffix
+if [ "$ARCH" = "32" ]
+then
+   echo "32-bit version of Eclipse is not supported"
+   exit -1
+else
+   ARCH_VERSION=gtk-x86_64
+fi
+
+#
+# Starting with ACS COMMON-2019JUN we only install Eclipse 4 (currently 4.11)
+# under $ALMASW_ROOTDIR/$ALMASW_RELEASE/Eclipse4.
+#
+TOPDIR=$ALMASW_ROOTDIR/$ALMASW_RELEASE/Eclipse4
+if [ -d $TOPDIR ]
+then
+  echo $TOPDIR directory exists already. I clean it up.
+  rm -rf $TOPDIR
+fi
+SDKDIR=$TOPDIR/SDKandDeltaPack
+mkdir $TOPDIR
+mkdir $SDKDIR
+
+VERSION=4.23
+RELEASE=2022-03
+echo "unpacking the archives for Eclipse "$VERSION
+SDKFILE=$CURR_DIR/../PRODUCTS/eclipse-SDK-$VERSION-linux-$ARCH_VERSION.tar.gz
+cd $SDKDIR
+tar zxf $SDKFILE
+echo "$SDKFILE installed."
+DELTAPACKFILE=$CURR_DIR/../PRODUCTS/eclipse-$VERSION-delta-pack.zip
+eclipse/eclipse -nosplash -application org.eclipse.equinox.p2.director -repository https://download.eclipse.org/releases/$RELEASE -installIU org.eclipse.equinox.sdk.feature.group
+echo "$DELTAPACKFILE installed."
+echo "done with v.$VERSION"
+echo "installing EMF-related plugins"
+eclipse/eclipse -nosplash -application org.eclipse.equinox.p2.director -repository https://download.eclipse.org/releases/$RELEASE -installIU org.eclipse.emf.sdk.feature.group,org.eclipse.xtext.sdk.feature.group,org.eclipse.uml2.sdk.feature.group
+#EMF helper packs
+eclipse/eclipse -nosplash -application org.eclipse.equinox.p2.director -repository https://download.itemis.com/updates/releases/2.1.1/ -installIU de.itemis.xtext.antlr
+echo ""
+
+cd $CURR_DIR
+echo Eclipse installation done
+date

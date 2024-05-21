@@ -1,0 +1,32 @@
+--- TAO.orig/ACE_TAO/TAO/tao/IIOP_Transport.cpp	2021-03-11 20:06:24.836490472 -0300
++++ TAO/ACE_TAO/TAO/tao/IIOP_Transport.cpp	2021-03-15 14:06:59.989800690 -0300
+@@ -58,10 +58,15 @@
+                           size_t &bytes_transferred,
+                           const ACE_Time_Value *max_wait_time)
+ {
+-  ssize_t const retval =
++  ssize_t retval =
+     this->connection_handler_->peer ().sendv (iov,
+                                               iovcnt,
+                                               max_wait_time);
++  usleep(1000);
++  ssize_t reterr = this->connection_handler_->peer().send(NULL, 0, max_wait_time);
++  if (reterr < 0)
++    retval = reterr;
++
+   if (retval > 0)
+     bytes_transferred = retval;
+   else
+--- TAO.orig/ACE_TAO/TAO/tao/Synch_Invocation.cpp	2021-03-11 20:06:24.842490472 -0300
++++ TAO/ACE_TAO/TAO/tao/Synch_Invocation.cpp	2021-03-15 14:17:35.086786758 -0300
+@@ -891,7 +891,9 @@
+           }
+ 
+ #if TAO_HAS_INTERCEPTORS == 1
+-        s = this->receive_other_interception ();
++        Invocation_Status tmp = this->receive_other_interception ();
++        if (tmp != TAO_INVOKE_SUCCESS)
++          s = tmp;
+       }
+     catch ( ::CORBA::Exception& ex)
+       {

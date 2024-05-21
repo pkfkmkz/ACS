@@ -1,0 +1,35 @@
+---
+components_by_name:
+  - name: CLOCK1
+    properties:
+      - name: array2TAI
+        fields:
+          - name: min_value
+            value: '0'
+          - name: max_value
+            value: '0'
+      - name: TAI2UTC
+        fields:
+          - name: description
+            value: '"\"This property is for controlling TAI to UTC parsing.\""'
+
+components_by_type:
+  - type: MOUNT:1.0
+    properties:
+    - name: cmdAz
+      fields:
+        - name: description
+          value: '"\"Commanded azimuth.\""'
+        - name: 'alarm_high_on'
+          value: '1.0E1'
+        - name: 'alarm_low_on'
+          value: '1.0E1'
+
+    - name: cmdEl
+      fields:
+        - name: description
+          value: '"\"Commanded elevation.\""'
+        - name: 'alarm_high_on'
+          value: '1.0E1'
+        - name: 'alarm_low_on'
+          value: '1.0E1'

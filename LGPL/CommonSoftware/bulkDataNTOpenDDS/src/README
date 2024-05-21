@@ -1,0 +1,5 @@
+BULKDATA_NT_DEBUG
+This environment variable is used to set a verbosity of log in DCPS and Transport levels.
+
+MODROOT
+This environment variable is used to set the path of module. It is used to get the configuration file used by OpenDDS for tests

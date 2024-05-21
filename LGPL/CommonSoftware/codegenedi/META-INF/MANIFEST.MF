@@ -1,0 +1,7 @@
+Export-Package: alma.acs.tmcdb.grammardef.ui.contentassist
+Require-Bundle: org.eclipse.xtext.ui,
+ org.eclipse.xtext.ui.shared,
+ org.eclipse.ui.editors,
+ org.eclipse.ui
+Import-Package: org.apache.log4j
+Bundle-Activator: alma.acs.tmcdb.grammardef.ui.internal.TmcdbTablesActivator

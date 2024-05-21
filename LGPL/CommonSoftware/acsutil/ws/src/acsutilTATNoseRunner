@@ -1,0 +1,8 @@
+#!/bin/bash
+#A general purpose script designed to run nose tests
+#helping to find the executable as it's not directly
+#callable from TAT
+#sample usage would be: 
+#          acsutilTATNoseRunner -v acsexmplClient
+
+nose2 $*

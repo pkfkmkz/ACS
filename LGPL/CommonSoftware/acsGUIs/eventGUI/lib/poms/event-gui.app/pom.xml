@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+
+    <name>Event GUI Application Plugin</name>
+    <groupId>alma.acs</groupId>
+    <artifactId>event-gui.app</artifactId>
+    <packaging>eclipse-plugin</packaging>
+
+    <parent>
+        <groupId>alma.acs</groupId>
+        <artifactId>event-gui.parent</artifactId>
+        <version>${revision}${sha1}${changelist}</version>
+        <relativePath>../../..</relativePath>
+    </parent>
+
+    <dependencies>
+        <dependency>
+            <groupId>alma.acs</groupId>
+            <artifactId>event-gui.deps</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+
+</project>
